@@ -28,9 +28,9 @@ func (e *Engine) Run(addr string) error {
 
 
 func (e *Engine) GET(pattern string, handler HandlerFunc) {
-	e.router.addRouter("GET", pattern, handler)
+	e.router.addRoute("GET", pattern, handler)
 }
 
 func (e *Engine) POST(pattern string, handler HandlerFunc) {
-	e.router.addRouter("POST", pattern, handler)
+	e.router.addRoute("POST", pattern, handler)
 }
