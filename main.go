@@ -54,6 +54,7 @@ func main() {
 	})
 
 	g1 := e.Group("/v1")
+	g1.Use(gee.Recover())
 	g1.Use(func(c *gee.Context) {
 		start := time.Now()
 		c.Next()
@@ -61,6 +62,10 @@ func main() {
 		log.Println("spent=", spent)
 	})
 	g1.GET("/user", func(c *gee.Context) {
+		c.String(http.StatusOK, "hello")
+	})
+	g1.GET("/panic", func(c *gee.Context) {
+		panic("~~~")
 		c.String(http.StatusOK, "hello")
 	})
 

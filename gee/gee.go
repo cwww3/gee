@@ -1,10 +1,12 @@
 package gee
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"path"
+	"runtime/debug"
 	"strings"
 )
 
@@ -32,7 +34,30 @@ func New() *Engine {
 	return engine
 }
 
+func Default() *Engine {
+	engine := &Engine{
+		router: newRouter(),
+	}
+	engine.RouterGroup = &RouterGroup{engine: engine}
+	engine.groups = []*RouterGroup{engine.RouterGroup}
+	engine.Use(Recover())
+	return engine
+}
+
 type HandlerFunc func(c *Context)
+
+func Recover() HandlerFunc {
+	return func(c *Context) {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println("err=", err)
+				fmt.Printf("%s\n", debug.Stack())
+				c.String(http.StatusInternalServerError, "Internal Server Error")
+			}
+		}()
+		c.Next()
+	}
+}
 
 func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var middlewares []HandlerFunc
