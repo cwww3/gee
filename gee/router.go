@@ -38,11 +38,14 @@ func (r *router) addRoute(method, pattern string, handler HandlerFunc) {
 	if !ok {
 		r.roots[method] = &node{}
 	}
+	// 添加时 处理方法handler根据key存储
+	// 搜索时 能得到pattern，组装能key
 	r.roots[method].insert(pattern, parts, 0)
 	r.handlers[key] = handler
 }
 
 func (r *router) getRoute(method, pattern string) (*node, map[string]string) {
+	// 用户路径
 	searchParts := parsePattern(pattern)
 	params := make(map[string]string)
 	_, ok := r.roots[method]
@@ -52,6 +55,7 @@ func (r *router) getRoute(method, pattern string) (*node, map[string]string) {
 	n := r.roots[method].search(searchParts, 0)
 	if n != nil {
 		// 解析参数
+		// 与设定路径对比
 		parts := parsePattern(n.pattern)
 		for index, part := range parts {
 			if part[0] == ':' {

@@ -31,5 +31,10 @@ func main() {
 		})
 	})
 
+	g1 := e.Group("/v1")
+	g1.GET("/user", func(c *gee.Context) {
+		c.String(http.StatusOK, "hello")
+	})
+
 	e.Run(":8080")
 }
