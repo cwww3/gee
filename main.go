@@ -43,6 +43,7 @@ func main() {
 	g1.GET("/user", func(c *gee.Context) {
 		c.String(http.StatusOK, "hello")
 	})
+	e.Static("/static","./asset")
 
 	e.Run(":8080")
 }
