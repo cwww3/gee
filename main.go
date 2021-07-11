@@ -1,17 +1,37 @@
 package main
 
 import (
+	"fmt"
 	"gee"
+	"html/template"
 	"log"
 	"net/http"
 	"time"
 )
 
+func FormatAsDate(t time.Time) string {
+	year, month, day := t.Date()
+	return fmt.Sprintf("%d-%02d-%02d", year, month, day)
+}
+
 func main() {
 	e := gee.New()
-	e.GET("/", func(c *gee.Context) {
-		c.HTML(http.StatusOK, "<h1>Hello Gee</h1>")
+	e.SetFuncMap(template.FuncMap{
+		"FormatAsDate": FormatAsDate,
 	})
+	e.LoadHTMLGlob("templates/*")
+	e.Static("/static", "./asset")
+
+	e.GET("/", func(c *gee.Context) {
+		c.HTML(http.StatusOK, "css.tmpl", nil)
+	})
+	e.GET("/custom", func(c *gee.Context) {
+		c.HTML(http.StatusOK, "custom.tmpl", gee.H{
+			"now":  time.Date(2021, 7, 11, 0, 0, 0, 0, time.Local),
+			"name": "cw",
+		})
+	})
+
 	e.GET("/hello", func(c *gee.Context) {
 		// expect /hello?name=geektutu
 		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
@@ -43,7 +63,6 @@ func main() {
 	g1.GET("/user", func(c *gee.Context) {
 		c.String(http.StatusOK, "hello")
 	})
-	e.Static("/static","./asset")
 
 	e.Run(":8080")
 }

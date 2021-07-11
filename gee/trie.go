@@ -51,7 +51,7 @@ func (n *node) insert(pattern string, parts []string, height int) {
 func (n *node) search(parts []string, height int) *node {
 	if len(parts) == height || strings.HasPrefix(n.part, "*") {
 		// 插入时在最后一个节点存储了完整路径
-		if n.part == "" {
+		if n.pattern == "" {
 			return nil
 		}
 		return n
