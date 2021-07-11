@@ -61,7 +61,7 @@ func (r *router) getRoute(method, pattern string) (*node, map[string]string) {
 			if part[0] == ':' {
 				params[part[1:]] = searchParts[index]
 			}
-			if part[0] == '*' && len(part)>1 {
+			if part[0] == '*' && len(part) > 1 {
 				params[part[1:]] = strings.Join(searchParts[index:], "/")
 				break
 			}
@@ -76,8 +76,9 @@ func (r *router) handle(c *Context) {
 	if n != nil {
 		c.Params = params
 		key := c.Method + "-" + n.pattern
-		r.handlers[key](c)
+		c.handlers = append(c.handlers, r.handlers[key])
 	} else {
 		c.String(http.StatusNotFound, "404 NOT FOUND: %s\n", c.Path)
 	}
+	c.Next()
 }

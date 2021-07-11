@@ -2,7 +2,9 @@ package main
 
 import (
 	"gee"
+	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -32,6 +34,12 @@ func main() {
 	})
 
 	g1 := e.Group("/v1")
+	g1.Use(func(c *gee.Context) {
+		start := time.Now()
+		c.Next()
+		spent := time.Since(start).Nanoseconds()
+		log.Println("spent=", spent)
+	})
 	g1.GET("/user", func(c *gee.Context) {
 		c.String(http.StatusOK, "hello")
 	})
